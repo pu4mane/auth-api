@@ -10,5 +10,6 @@ FROM alpine:3.20
 
 WORKDIR /root/
 COPY --from=builder /github.com/pu4mane/auth-api/source/bin/auth-api .
+COPY --from=builder /github.com/pu4mane/auth-api/source/local.env .
 
-CMD ["./auth-api"]
+CMD ["./auth-api", "-config=local.env"]

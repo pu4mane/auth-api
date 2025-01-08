@@ -1,23 +1,41 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"log"
 	"net"
 
+	"github.com/pu4mane/auth-api/internal/config"
+	"github.com/pu4mane/auth-api/internal/config/env"
 	user "github.com/pu4mane/auth-api/pkg/grpc/user_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcPort = 50051
+var configPath string
+
+func init() {
+	flag.StringVar(&configPath, "config", ".env", "path to config file")
+}
 
 type server struct {
 	user.UnimplementedUserServer
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	flag.Parse()
+
+	err := config.Load(configPath)
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
+	grpcConfig, err := env.NewGRPCConfig()
+	if err != nil {
+		log.Fatalf("failed to get grpc config: %v", err)
+	}
+
+	lis, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
