@@ -3,6 +3,7 @@ module github.com/pu4mane/auth-api
 go 1.23
 
 require (
+	github.com/joho/godotenv v1.5.1
 	google.golang.org/grpc v1.69.2
 	google.golang.org/protobuf v1.36.2
 )
